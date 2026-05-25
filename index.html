@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My To-Do List</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f9f9f7; color: #1a1a18; min-height: 100vh; }
+    #app { max-width: 620px; margin: 0 auto; padding: 2rem 1.25rem; }
+    h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+    .view-badge { font-size: 12px; color: #888; margin-bottom: 1.5rem; }
+    .add-row { display: flex; gap: 8px; margin-bottom: 0.75rem; }
+    .add-row input { flex: 1; height: 38px; padding: 0 12px; font-size: 15px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #1a1a18; outline: none; }
+    .add-row input:focus { border-color: #aaa; box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+    button { height: 38px; padding: 0 14px; font-size: 14px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #1a1a18; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    button:hover { background: #f3f3f0; }
+    .row-label { font-size: 13px; color: #666; flex-shrink: 0; align-self: center; }
+    .pill-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .pill { height: 30px; padding: 0 12px; font-size: 13px; border-radius: 999px; border: 1px solid #ddd; background: #fff; color: #1a1a18; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+    .pill:hover { background: #f3f3f0; }
+    .pill.active { font-weight: 500; }
+    .add-tag-pill { border-style: dashed; color: #999; }
+    .add-tag-pill:hover { color: #1a1a18; background: #f3f3f0; }
+    .add-person-inline { display: none; gap: 6px; align-items: center; }
+    .add-person-inline input { height: 30px; width: 150px; padding: 0 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 999px; background: #fff; color: #1a1a18; outline: none; }
+    .add-person-inline button { height: 30px; padding: 0 12px; font-size: 13px; border-radius: 999px; }
+    .divider-row { display: flex; align-items: center; gap: 10px; margin: 0.75rem 0; }
+    .divider-line { flex: 1; border-top: 1px solid #e5e5e2; }
+    .section-label { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; }
+    .task-list { list-style: none; margin-bottom: 1rem; }
+    .task-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #e8e8e5; border-radius: 8px; margin-bottom: 6px; background: #fff; }
+    .task-item.done { background: #f5f5f2; }
+    .task-item input[type="checkbox"] { width: 16px; height: 16px; margin-top: 3px; cursor: pointer; flex-shrink: 0; accent-color: #555; }
+    .task-body { flex: 1; }
+    .task-text { font-size: 15px; color: #1a1a18; }
+    .task-item.done .task-text { color: #aaa; text-decoration: line-through; }
+    .task-meta { display: flex; gap: 8px; margin-top: 4px; align-items: center; flex-wrap: wrap; }
+    .tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+    .task-date { font-size: 12px; color: #aaa; }
+    .completed-by { font-size: 12px; color: #888; font-style: italic; }
+    .notif-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #e24b4a; margin-right: 4px; vertical-align: 1px; }
+    .empty-hint { font-size: 14px; color: #aaa; padding: 8px 0 1rem; }
+    .switch-row { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e5e5e2; }
+    .switch-row p { font-size: 13px; color: #aaa; margin-bottom: 8px; }
+    .switch-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .switch-btn { height: 36px; padding: 0 16px; font-size: 14px; }
+    .switch-btn.current { border-color: #888; font-weight: 500; }
+    @media (prefers-color-scheme: dark) {
+      body { background: #1a1a18; color: #f0f0ee; }
+      .add-row input, button, .pill, .add-person-inline input, .task-item { background: #2a2a28; border-color: #3a3a38; color: #f0f0ee; }
+      .task-item.done { background: #222220; }
+      button:hover, .pill:hover { background: #333330; }
+      .task-text { color: #f0f0ee; }
+      .task-item.done .task-text { color: #666; }
+      .divider-line { border-color: #3a3a38; }
+      .switch-btn.current { border-color: #888; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h1 id="viewTitle"><i class="ti ti-checklist" aria-hidden="true" style="font-size:20px;vertical-align:-3px;margin-right:8px;"></i>My to-do list</h1>
+  <div class="view-badge" id="viewBadge">Manager view</div>
+
+  <div id="managerUI">
+    <div class="add-row">
+      <input type="text" id="newTask" placeholder="Add a task..." />
+      <button onclick="addTask()"><i class="ti ti-plus" aria-hidden="true"></i> Add</button>
+    </div>
+    <div class="pill-row">
+      <span class="row-label">Assign to:</span>
+      <div id="assignPills"></div>
+    </div>
+    <div class="divider-row">
+      <div class="divider-line"></div>
+      <span class="section-label">Filter view</span>
+      <div class="divider-line"></div>
+    </div>
+    <div class="pill-row">
+      <div id="filterPills"></div>
+      <button class="pill" style="color:#aaa;border-color:transparent;" onclick="clearFilters()">Show all</button>
+    </div>
+    <div class="pill-row" style="margin-bottom:0;">
+      <span class="row-label">Tags:</span>
+      <div id="teamPills"></div>
+      <button class="pill add-tag-pill" id="addPersonBtn" onclick="showAddPerson()"><i class="ti ti-plus" aria-hidden="true" style="font-size:12px;"></i> Add person or project</button>
+      <div class="add-person-inline" id="addPersonInline">
+        <input type="text" id="newPersonName" placeholder="Name or project..." maxlength="20" />
+        <button onclick="confirmAddPerson()">Add</button>
+        <button onclick="cancelAddPerson()" style="border-color:transparent;color:#aaa;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <ul class="task-list" id="activeList"></ul>
+  <p class="empty-hint" id="activeEmpty" style="display:none;">No active tasks match this filter.</p>
+
+  <div class="divider-row" style="margin-top:0.5rem;">
+    <div class="divider-line"></div>
+    <span class="section-label" id="doneLabel">Completed</span>
+    <div class="divider-line"></div>
+  </div>
+  <ul class="task-list" id="doneList"></ul>
+  <p class="empty-hint" id="doneEmpty">Nothing completed yet.</p>
+
+  <div class="switch-row">
+    <p>Switch view:</p>
+    <div class="switch-btns" id="switchBtns"></div>
+  </div>
+</div>
+
+<script>
+const COLORS = [
+  { bg:'#EEEDFE', border:'#7F77DD', text:'#26215C', tagBg:'#EEEDFE', tagText:'#3C3489' },
+  { bg:'#E1F5EE', border:'#1D9E75', text:'#04342C', tagBg:'#E1F5EE', tagText:'#085041' },
+  { bg:'#FAECE7', border:'#D85A30', text:'#4A1B0C', tagBg:'#FAECE7', tagText:'#712B13' },
+  { bg:'#FBEAF0', border:'#D4537E', text:'#4B1528', tagBg:'#FBEAF0', tagText:'#72243E' },
+  { bg:'#E6F1FB', border:'#378ADD', text:'#042C53', tagBg:'#E6F1FB', tagText:'#0C447C' },
+  { bg:'#FAEEDA', border:'#BA7517', text:'#412402', tagBg:'#FAEEDA', tagText:'#633806' },
+];
+const ME_COLOR = { bg:'#F1EFE8', border:'#888780', text:'#2C2C2A', tagBg:'#F1EFE8', tagText:'#444441' };
+
+let data = JSON.parse(localStorage.getItem('todo_app_data') || 'null');
+if (!data) {
+  data = {
+    tasks: [
+      { id:1, text:'Review Q2 report', assignee:'me', done:false, date:fmtDate(new Date()), completedBy:null, completedAt:null },
+      { id:2, text:'Send client proposal', assignee:'emily', done:false, date:fmtDate(new Date()), completedBy:null, completedAt:null },
+      { id:3, text:'Update onboarding doc', assignee:'trisha', done:false, date:fmtDate(new Date()), completedBy:null, completedAt:null }
+    ],
+    team: ['emily','trisha']
+  };
+  save();
+}
+
+let currentView = 'manager';
+let currentAssignee = 'me';
+let activeFilters = new Set();
+
+function fmtDate(d) { return d.toLocaleDateString('en-US', { month:'short', day:'numeric' }); }
+function save() { localStorage.setItem('todo_app_data', JSON.stringify(data)); }
+function colorFor(n) { if (n==='me') return ME_COLOR; const i=data.team.indexOf(n)%COLORS.length; return COLORS[i<0?0:i]; }
+function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function setAssignee(a) { currentAssignee=a; renderPills(); }
+function toggleFilter(f) { activeFilters.has(f)?activeFilters.delete(f):activeFilters.add(f); renderPills(); render(); }
+function clearFilters() { activeFilters.clear(); renderPills(); render(); }
+
+function addTask() {
+  const input = document.getElementById('newTask');
+  const text = input.value.trim();
+  if (!text) return;
+  data.tasks.unshift({ id:Date.now(), text, assignee:currentAssignee, done:false, date:fmtDate(new Date()), completedBy:null, completedAt:null });
+  input.value = '';
+  setAssignee('me');
+  save(); render();
+}
+
+function toggle(id) {
+  const t = data.tasks.find(t=>t.id===id);
+  if (!t) return;
+  t.done = !t.done;
+  t.completedBy = t.done ? (currentView==='manager'?'you':currentView) : null;
+  t.completedAt = t.done ? fmtDate(new Date()) : null;
+  save(); render();
+}
+
+function switchView(v) { currentView=v; renderPills(); render(); }
+
+function showAddPerson() {
+  document.getElementById('addPersonBtn').style.display='none';
+  document.getElementById('addPersonInline').style.display='flex';
+  document.getElementById('newPersonName').focus();
+}
+function cancelAddPerson() {
+  document.getElementById('addPersonBtn').style.display='inline-flex';
+  document.getElementById('addPersonInline').style.display='none';
+  document.getElementById('newPersonName').value='';
+}
+function confirmAddPerson() {
+  const input = document.getElementById('newPersonName');
+  const name = input.value.trim().toLowerCase().replace(/\s+/g,'');
+  if (!name||name==='me'||data.team.includes(name)) { input.focus(); return; }
+  data.team.push(name);
+  save(); cancelAddPerson(); renderPills(); renderSwitchBtns();
+}
+
+function renderPills() {
+  const all = ['me',...data.team];
+  const ac = document.getElementById('assignPills');
+  const fc = document.getElementById('filterPills');
+  const tc = document.getElementById('teamPills');
+  ac.innerHTML=''; fc.innerHTML=''; tc.innerHTML='';
+
+  all.forEach(k => {
+    const c=colorFor(k); const label=k==='me'?'Me':cap(k);
+    const ab=document.createElement('button'); ab.className='pill'+(currentAssignee===k?' active':'');
+    ab.style.cssText=(currentAssignee===k?`background:${c.bg};border-color:${c.border};color:${c.text};`:'')+'margin-right:6px;';
+    ab.textContent=label; ab.onclick=()=>setAssignee(k); ac.appendChild(ab);
+
+    const fb=document.createElement('button'); fb.className='pill'+(activeFilters.has(k)?' active':'');
+    fb.style.cssText=(activeFilters.has(k)?`background:${c.bg};border-color:${c.border};color:${c.text};`:'')+'margin-right:6px;';
+    fb.textContent=label; fb.onclick=()=>toggleFilter(k); fc.appendChild(fb);
+  });
+
+  data.team.forEach(k => {
+    const c=colorFor(k); const sp=document.createElement('span'); sp.className='pill';
+    sp.style.cssText=`background:${c.bg};border-color:${c.border};color:${c.text};margin-right:6px;cursor:default;`;
+    sp.textContent=cap(k); tc.appendChild(sp);
+  });
+}
+
+function renderSwitchBtns() {
+  const container=document.getElementById('switchBtns'); container.innerHTML='';
+  ['manager',...data.team].forEach(v => {
+    const btn=document.createElement('button'); btn.className='switch-btn'+(v===currentView?' current':'');
+    btn.innerHTML=`<i class="ti ti-${v==='manager'?'layout-dashboard':'user'}" aria-hidden="true"></i> ${v==='manager'?'Manager':cap(v)}`;
+    btn.onclick=()=>switchView(v); container.appendChild(btn);
+  });
+}
+
+function hasNewCompletions() { return data.tasks.some(t=>t.done&&t.completedBy&&t.completedBy!=='you'); }
+
+function render() {
+  const isManager=currentView==='manager';
+  document.getElementById('viewTitle').innerHTML=`<i class="ti ti-checklist" aria-hidden="true" style="font-size:20px;vertical-align:-3px;margin-right:8px;"></i>${isManager?'My to-do list':cap(currentView)+"'s tasks"}`;
+  document.getElementById('viewBadge').textContent=isManager?'Manager view':'Team member view';
+  document.getElementById('managerUI').style.display=isManager?'block':'none';
+
+  let visible=isManager?(activeFilters.size===0?data.tasks:data.tasks.filter(t=>activeFilters.has(t.assignee))):data.tasks.filter(t=>t.assignee===currentView);
+  const active=visible.filter(t=>!t.done); const done=visible.filter(t=>t.done);
+
+  document.getElementById('activeEmpty').style.display=active.length?'none':'block';
+  document.getElementById('doneEmpty').style.display=done.length?'none':'block';
+  document.getElementById('doneLabel').innerHTML=isManager&&hasNewCompletions()?'<span class="notif-dot"></span>Completed':'Completed';
+
+  function buildItem(t) {
+    const isNew=isManager&&t.done&&t.completedBy&&t.completedBy!=='you';
+    const c=colorFor(t.assignee); const li=document.createElement('li');
+    li.className='task-item'+(t.done?' done':'');
+    li.innerHTML=`
+      <input type="checkbox" ${t.done?'checked':''} onchange="toggle(${t.id})" aria-label="Mark complete" />
+      <div class="task-body">
+        <div class="task-text">${t.text}</div>
+        <div class="task-meta">
+          ${isManager?`<span class="tag" style="background:${c.tagBg};color:${c.tagText};">${t.assignee==='me'?'Me':cap(t.assignee)}</span>`:''}
+          <span class="task-date">${t.date}</span>
+          ${t.completedBy?`<span class="completed-by">${isNew?'<span class="notif-dot"></span>':''}Completed by ${t.completedBy} · ${t.completedAt}</span>`:''}
+        </div>
+      </div>`;
+    return li;
+  }
+
+  const aList=document.getElementById('activeList'); const dList=document.getElementById('doneList');
+  aList.innerHTML=''; dList.innerHTML='';
+  active.forEach(t=>aList.appendChild(buildItem(t)));
+  done.forEach(t=>dList.appendChild(buildItem(t)));
+}
+
+document.getElementById('newTask').addEventListener('keydown', e=>{ if(e.key==='Enter') addTask(); });
+document.getElementById('newPersonName').addEventListener('keydown', e=>{ if(e.key==='Enter') confirmAddPerson(); if(e.key==='Escape') cancelAddPerson(); });
+
+renderPills(); renderSwitchBtns(); render();
+</script>
+</body>
+</html>
