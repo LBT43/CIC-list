@@ -9,8 +9,21 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f9f9f7; color: #1a1a18; min-height: 100vh; }
     #app { max-width: 620px; margin: 0 auto; padding: 2rem 1.25rem; }
-    h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    h1 { font-size: 22px; font-weight: 500; }
     .view-badge { font-size: 12px; color: #888; margin-bottom: 1.5rem; }
+    .bell-btn { position: relative; border: none; background: none; height: 36px; width: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; color: #666; }
+    .bell-btn:hover { background: #f3f3f0; }
+    .bell-dot { position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: #EF9F27; display: none; }
+    .notif-panel { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 12px 16px; margin-bottom: 1.25rem; display: none; }
+    .notif-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .notif-panel-header span { font-size: 13px; font-weight: 500; }
+    .notif-clear { font-size: 12px; color: #aaa; border: none; background: none; height: auto; padding: 0; cursor: pointer; }
+    .notif-clear:hover { color: #1a1a18; background: none; }
+    .notif-empty { font-size: 13px; color: #aaa; }
+    .notif-item { font-size: 13px; color: #666; padding: 6px 0; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: flex-start; }
+    .notif-item .ndot { width: 6px; height: 6px; border-radius: 50%; background: #EF9F27; flex-shrink: 0; margin-top: 5px; }
+    .notif-time { font-size: 11px; color: #aaa; white-space: nowrap; }
     .add-row { display: flex; gap: 8px; margin-bottom: 0.75rem; }
     .add-row input { flex: 1; height: 38px; padding: 0 12px; font-size: 15px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #1a1a18; outline: none; }
     .add-row input:focus { border-color: #aaa; box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
@@ -22,53 +35,81 @@
     .pill:hover { background: #f3f3f0; }
     .pill.active { font-weight: 500; }
     .add-tag-pill { border-style: dashed; color: #999; }
-    .add-tag-pill:hover { color: #1a1a18; background: #f3f3f0; }
-    .add-person-inline { display: none; gap: 6px; align-items: center; }
-    .add-person-inline input { height: 30px; width: 150px; padding: 0 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 999px; background: #fff; color: #1a1a18; outline: none; }
+    .add-tag-pill:hover { color: #1a1a18; }
+    .add-person-inline { display: none; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .add-person-inline input { height: 30px; width: 140px; padding: 0 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 999px; background: #fff; color: #1a1a18; outline: none; }
     .add-person-inline button { height: 30px; padding: 0 12px; font-size: 13px; border-radius: 999px; }
     .divider-row { display: flex; align-items: center; gap: 10px; margin: 0.75rem 0; }
     .divider-line { flex: 1; border-top: 1px solid #e5e5e2; }
     .section-label { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; }
     .task-list { list-style: none; margin-bottom: 1rem; }
-    .task-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #e8e8e5; border-radius: 8px; margin-bottom: 6px; background: #fff; }
+    .task-item { border: 1px solid #e8e8e5; border-radius: 8px; margin-bottom: 6px; background: #fff; overflow: hidden; }
     .task-item.done { background: #f5f5f2; }
+    .task-main { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; cursor: pointer; }
+    .task-main:hover { background: #f5f5f2; }
     .task-item input[type="checkbox"] { width: 16px; height: 16px; margin-top: 3px; cursor: pointer; flex-shrink: 0; accent-color: #555; }
-    .task-body { flex: 1; }
+    .task-body { flex: 1; min-width: 0; }
     .task-text { font-size: 15px; color: #1a1a18; }
     .task-item.done .task-text { color: #aaa; text-decoration: line-through; }
     .task-meta { display: flex; gap: 8px; margin-top: 4px; align-items: center; flex-wrap: wrap; }
     .tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
     .task-date { font-size: 12px; color: #aaa; }
     .completed-by { font-size: 12px; color: #888; font-style: italic; }
-    .notif-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #e24b4a; margin-right: 4px; vertical-align: 1px; }
+    .unread-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .unread-manager { background: #EF9F27; }
+    .unread-team { background: #378ADD; }
+    .task-expand { padding: 0 12px 12px 38px; display: none; }
+    .task-expand textarea { width: 100%; min-height: 64px; padding: 8px 10px; font-size: 13px; font-family: inherit; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #1a1a18; resize: vertical; outline: none; }
+    .task-expand textarea:focus { border-color: #aaa; box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+    .task-expand textarea::placeholder { color: #aaa; }
+    .expand-chevron { font-size: 13px; color: #aaa; flex-shrink: 0; margin-top: 3px; }
     .empty-hint { font-size: 14px; color: #aaa; padding: 8px 0 1rem; }
-    .switch-row { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e5e5e2; }
-    .switch-row p { font-size: 13px; color: #aaa; margin-bottom: 8px; }
-    .switch-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-    .switch-btn { height: 36px; padding: 0 16px; font-size: 14px; }
-    .switch-btn.current { border-color: #888; font-weight: 500; }
+    .links-section { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e5e2; }
+    .links-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #aaa; border: none; background: none; padding: 4px 0; height: auto; cursor: pointer; }
+    .links-toggle:hover { color: #1a1a18; background: none; }
+    .links-box { background: #f5f5f2; border: 1px solid #e8e8e5; border-radius: 8px; padding: 12px 16px; margin-top: 10px; display: none; }
+    .links-box p { font-size: 13px; color: #666; margin-bottom: 10px; }
+    .link-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .link-code { font-size: 12px; color: #666; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: monospace; }
+    .copy-btn { height: 26px; padding: 0 10px; font-size: 12px; border-radius: 999px; }
     @media (prefers-color-scheme: dark) {
       body { background: #1a1a18; color: #f0f0ee; }
-      .add-row input, button, .pill, .add-person-inline input, .task-item { background: #2a2a28; border-color: #3a3a38; color: #f0f0ee; }
-      .task-item.done { background: #222220; }
+      .add-row input, button, .pill, .add-person-inline input, .task-item, .notif-panel, .task-expand textarea { background: #2a2a28; border-color: #3a3a38; color: #f0f0ee; }
+      .task-item.done, .task-main:hover { background: #222220; }
       button:hover, .pill:hover { background: #333330; }
       .task-text { color: #f0f0ee; }
       .task-item.done .task-text { color: #666; }
       .divider-line { border-color: #3a3a38; }
-      .switch-btn.current { border-color: #888; }
+      .links-box { background: #222220; border-color: #3a3a38; }
+      .notif-item { border-color: #3a3a38; }
     }
   </style>
 </head>
 <body>
 <div id="app">
-  <h1 id="viewTitle"><i class="ti ti-checklist" aria-hidden="true" style="font-size:20px;vertical-align:-3px;margin-right:8px;"></i>My to-do list</h1>
+  <div class="top-bar">
+    <h1 id="viewTitle"><i class="ti ti-checklist" aria-hidden="true" style="font-size:20px;vertical-align:-3px;margin-right:8px;"></i>My to-do list</h1>
+    <button class="bell-btn" id="bellBtn" onclick="toggleNotifPanel()" aria-label="Notifications" style="display:none;">
+      <i class="ti ti-bell" style="font-size:18px;" aria-hidden="true"></i>
+      <span class="bell-dot" id="bellDot"></span>
+    </button>
+  </div>
   <div class="view-badge" id="viewBadge">Manager view</div>
 
-  <div id="managerUI">
-    <div class="add-row">
-      <input type="text" id="newTask" placeholder="Add a task..." />
-      <button onclick="addTask()"><i class="ti ti-plus" aria-hidden="true"></i> Add</button>
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-header">
+      <span>Recent activity</span>
+      <button class="notif-clear" onclick="clearNotifs()">Clear all</button>
     </div>
+    <div id="notifList"><p class="notif-empty">No activity yet.</p></div>
+  </div>
+
+  <div class="add-row">
+    <input type="text" id="newTask" placeholder="Add a task..." />
+    <button onclick="addTask()"><i class="ti ti-plus" aria-hidden="true"></i> Add</button>
+  </div>
+
+  <div id="managerUI">
     <div class="pill-row">
       <span class="row-label">Assign to:</span>
       <div id="assignPills"></div>
@@ -105,164 +146,253 @@
   <ul class="task-list" id="doneList"></ul>
   <p class="empty-hint" id="doneEmpty">Nothing completed yet.</p>
 
-  <div class="switch-row">
-    <p>Switch view:</p>
-    <div class="switch-btns" id="switchBtns"></div>
+  <div class="links-section" id="linksSection" style="display:none;">
+    <button class="links-toggle" onclick="toggleLinks()">
+      <i class="ti ti-link" aria-hidden="true" style="font-size:13px;"></i>
+      <span id="linksToggleLabel">Show team links</span>
+      <i class="ti ti-chevron-down" aria-hidden="true" style="font-size:12px;" id="linksChevron"></i>
+    </button>
+    <div class="links-box" id="linksBox">
+      <p>Share each link with the right person — they'll only see their own tasks:</p>
+      <div id="linksList"></div>
+    </div>
   </div>
 </div>
 
 <script>
-const COLORS = [
-  { bg:'#EEEDFE', border:'#7F77DD', text:'#26215C', tagBg:'#EEEDFE', tagText:'#3C3489' },
-  { bg:'#E1F5EE', border:'#1D9E75', text:'#04342C', tagBg:'#E1F5EE', tagText:'#085041' },
-  { bg:'#FAECE7', border:'#D85A30', text:'#4A1B0C', tagBg:'#FAECE7', tagText:'#712B13' },
-  { bg:'#FBEAF0', border:'#D4537E', text:'#4B1528', tagBg:'#FBEAF0', tagText:'#72243E' },
-  { bg:'#E6F1FB', border:'#378ADD', text:'#042C53', tagBg:'#E6F1FB', tagText:'#0C447C' },
-  { bg:'#FAEEDA', border:'#BA7517', text:'#412402', tagBg:'#FAEEDA', tagText:'#633806' },
-];
-const ME_COLOR = { bg:'#F1EFE8', border:'#888780', text:'#2C2C2A', tagBg:'#F1EFE8', tagText:'#444441' };
+const COLORS=[{bg:'#EEEDFE',border:'#7F77DD',text:'#26215C',tagBg:'#EEEDFE',tagText:'#3C3489'},{bg:'#E1F5EE',border:'#1D9E75',text:'#04342C',tagBg:'#E1F5EE',tagText:'#085041'},{bg:'#FAECE7',border:'#D85A30',text:'#4A1B0C',tagBg:'#FAECE7',tagText:'#712B13'},{bg:'#FBEAF0',border:'#D4537E',text:'#4B1528',tagBg:'#FBEAF0',tagText:'#72243E'},{bg:'#E6F1FB',border:'#378ADD',text:'#042C53',tagBg:'#E6F1FB',tagText:'#0C447C'},{bg:'#FAEEDA',border:'#BA7517',text:'#412402',tagBg:'#FAEEDA',tagText:'#633806'}];
+const ME_COLOR={bg:'#F1EFE8',border:'#888780',text:'#2C2C2A',tagBg:'#F1EFE8',tagText:'#444441'};
+const BASE_URL=window.location.origin+window.location.pathname;
 
-let data = JSON.parse(localStorage.getItem('todo_app_data') || 'null');
-if (!data) {
-  data = {
-    tasks: [
-      { id:1, text:'Review Q2 report', assignee:'me', done:false, date:fmtDate(new Date()), completedBy:null, completedAt:null },
-      { id:2, text:'Send client proposal', assignee:'emily', done:false, date:fmtDate(new Date()), completedBy:null, completedAt:null },
-      { id:3, text:'Update onboarding doc', assignee:'trisha', done:false, date:fmtDate(new Date()), completedBy:null, completedAt:null }
+let data=JSON.parse(localStorage.getItem('todo_final')||'null');
+if(!data){
+  data={
+    tasks:[
+      {id:1,text:'Review Q2 report',assignee:'me',done:false,date:fmtDate(new Date()),completedBy:null,completedAt:null,notes:'',unreadManager:false,unreadTeam:false},
+      {id:2,text:'Send client proposal',assignee:'emily',done:false,date:fmtDate(new Date()),completedBy:null,completedAt:null,notes:'',unreadManager:false,unreadTeam:true},
+      {id:3,text:'Update onboarding doc',assignee:'trisha',done:false,date:fmtDate(new Date()),completedBy:null,completedAt:null,notes:'',unreadManager:false,unreadTeam:true}
     ],
-    team: ['emily','trisha']
+    team:['emily','trisha'],
+    notifications:[]
   };
   save();
 }
 
-let currentView = 'manager';
-let currentAssignee = 'me';
-let activeFilters = new Set();
+const params=new URLSearchParams(window.location.search);
+const viewParam=params.get('view')?params.get('view').toLowerCase():null;
+let currentView=(viewParam&&(viewParam==='manager'||data.team.includes(viewParam)))?viewParam:'manager';
+let currentAssignee='me';
+let activeFilters=new Set();
+let linksOpen=false;
+let notifOpen=false;
+let expandedTasks=new Set();
 
-function fmtDate(d) { return d.toLocaleDateString('en-US', { month:'short', day:'numeric' }); }
-function save() { localStorage.setItem('todo_app_data', JSON.stringify(data)); }
-function colorFor(n) { if (n==='me') return ME_COLOR; const i=data.team.indexOf(n)%COLORS.length; return COLORS[i<0?0:i]; }
-function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
+function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function fmtTime(d){return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+' · '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function save(){localStorage.setItem('todo_final',JSON.stringify(data));}
+function colorFor(n){if(n==='me')return ME_COLOR;const i=data.team.indexOf(n)%COLORS.length;return COLORS[i<0?0:i];}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
-function setAssignee(a) { currentAssignee=a; renderPills(); }
-function toggleFilter(f) { activeFilters.has(f)?activeFilters.delete(f):activeFilters.add(f); renderPills(); render(); }
-function clearFilters() { activeFilters.clear(); renderPills(); render(); }
-
-function addTask() {
-  const input = document.getElementById('newTask');
-  const text = input.value.trim();
-  if (!text) return;
-  data.tasks.unshift({ id:Date.now(), text, assignee:currentAssignee, done:false, date:fmtDate(new Date()), completedBy:null, completedAt:null });
-  input.value = '';
-  setAssignee('me');
-  save(); render();
+function addNotif(msg){
+  data.notifications.unshift({msg,time:fmtTime(new Date()),seen:false});
+  if(data.notifications.length>20)data.notifications.pop();
+  save();updateBellDot();
+  if(notifOpen)renderNotifs();
 }
 
-function toggle(id) {
-  const t = data.tasks.find(t=>t.id===id);
-  if (!t) return;
-  t.done = !t.done;
-  t.completedBy = t.done ? (currentView==='manager'?'you':currentView) : null;
-  t.completedAt = t.done ? fmtDate(new Date()) : null;
-  save(); render();
+function updateBellDot(){
+  const has=data.notifications.some(n=>!n.seen);
+  document.getElementById('bellDot').style.display=has?'block':'none';
 }
 
-function switchView(v) { currentView=v; renderPills(); render(); }
+function toggleNotifPanel(){
+  notifOpen=!notifOpen;
+  document.getElementById('notifPanel').style.display=notifOpen?'block':'none';
+  if(notifOpen){data.notifications.forEach(n=>n.seen=true);save();updateBellDot();renderNotifs();}
+}
 
-function showAddPerson() {
+function renderNotifs(){
+  const list=document.getElementById('notifList');
+  if(!data.notifications.length){list.innerHTML='<p class="notif-empty">No activity yet.</p>';return;}
+  list.innerHTML=data.notifications.map(n=>`<div class="notif-item"><span class="ndot"></span><span style="flex:1;">${n.msg}</span><span class="notif-time">${n.time}</span></div>`).join('');
+}
+
+function clearNotifs(){data.notifications=[];save();renderNotifs();}
+
+function toggleLinks(){
+  linksOpen=!linksOpen;
+  document.getElementById('linksBox').style.display=linksOpen?'block':'none';
+  document.getElementById('linksToggleLabel').textContent=linksOpen?'Hide team links':'Show team links';
+  document.getElementById('linksChevron').style.transform=linksOpen?'rotate(180deg)':'';
+}
+
+function renderLinks(){
+  const list=document.getElementById('linksList');list.innerHTML='';
+  data.team.forEach(k=>{
+    const c=colorFor(k);const url=`${BASE_URL}?view=${k}`;
+    const row=document.createElement('div');row.className='link-row';
+    row.innerHTML=`<span style="background:${c.tagBg};color:${c.tagText};padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;white-space:nowrap;">${cap(k)}</span><span class="link-code">${url}</span><button class="copy-btn" onclick="copyLink('${url}',this)"><i class="ti ti-copy" aria-hidden="true" style="font-size:12px;"></i> Copy</button>`;
+    list.appendChild(row);
+  });
+}
+
+function copyLink(url,btn){
+  navigator.clipboard.writeText(url).then(()=>{
+    btn.innerHTML='<i class="ti ti-check" aria-hidden="true" style="font-size:12px;"></i> Copied!';
+    setTimeout(()=>{btn.innerHTML='<i class="ti ti-copy" aria-hidden="true" style="font-size:12px;"></i> Copy';},2000);
+  });
+}
+
+function setAssignee(a){currentAssignee=a;renderPills();}
+function toggleFilter(f){activeFilters.has(f)?activeFilters.delete(f):activeFilters.add(f);renderPills();render();}
+function clearFilters(){activeFilters.clear();renderPills();render();}
+
+function addTask(){
+  const input=document.getElementById('newTask');
+  const text=input.value.trim();
+  if(!text)return;
+  const assignee=currentView==='manager'?currentAssignee:currentView;
+  const isTeamView=currentView!=='manager';
+  const task={id:Date.now(),text,assignee,done:false,date:fmtDate(new Date()),completedBy:null,completedAt:null,notes:'',unreadManager:isTeamView,unreadTeam:!isTeamView&&assignee!=='me'};
+  data.tasks.unshift(task);
+  input.value='';
+  if(isTeamView){addNotif(`${cap(currentView)} added a new task: "${text}"`);}
+  else{setAssignee('me');}
+  save();render();
+}
+
+function toggle(id,e){
+  e.stopPropagation();
+  const t=data.tasks.find(t=>t.id===id);
+  if(!t)return;
+  t.done=!t.done;
+  t.completedBy=t.done?(currentView==='manager'?'you':currentView):null;
+  t.completedAt=t.done?fmtDate(new Date()):null;
+  if(currentView!=='manager'){t.unreadManager=true;addNotif(t.done?`${cap(currentView)} completed "${t.text}"`:`${cap(currentView)} unchecked "${t.text}"`);}
+  save();render();
+}
+
+function toggleExpand(id){
+  const t=data.tasks.find(t=>t.id===id);
+  if(t){
+    if(currentView==='manager'&&t.unreadManager){t.unreadManager=false;save();}
+    if(currentView!=='manager'&&t.unreadTeam){t.unreadTeam=false;save();}
+  }
+  expandedTasks.has(id)?expandedTasks.delete(id):expandedTasks.add(id);
+  render();
+}
+
+function saveNote(id,val){
+  const t=data.tasks.find(t=>t.id===id);
+  if(!t)return;
+  const old=t.notes;t.notes=val;
+  if(currentView!=='manager'&&val!==old){t.unreadManager=true;addNotif(`${cap(currentView)} updated a note on "${t.text}"`);}
+  save();
+}
+
+function showAddPerson(){
   document.getElementById('addPersonBtn').style.display='none';
   document.getElementById('addPersonInline').style.display='flex';
   document.getElementById('newPersonName').focus();
 }
-function cancelAddPerson() {
+function cancelAddPerson(){
   document.getElementById('addPersonBtn').style.display='inline-flex';
   document.getElementById('addPersonInline').style.display='none';
   document.getElementById('newPersonName').value='';
 }
-function confirmAddPerson() {
-  const input = document.getElementById('newPersonName');
-  const name = input.value.trim().toLowerCase().replace(/\s+/g,'');
-  if (!name||name==='me'||data.team.includes(name)) { input.focus(); return; }
-  data.team.push(name);
-  save(); cancelAddPerson(); renderPills(); renderSwitchBtns();
+function confirmAddPerson(){
+  const input=document.getElementById('newPersonName');
+  const name=input.value.trim().toLowerCase().replace(/\s+/g,'');
+  if(!name||name==='me'||data.team.includes(name)){input.focus();return;}
+  data.team.push(name);save();cancelAddPerson();renderPills();renderLinks();
 }
 
-function renderPills() {
-  const all = ['me',...data.team];
-  const ac = document.getElementById('assignPills');
-  const fc = document.getElementById('filterPills');
-  const tc = document.getElementById('teamPills');
-  ac.innerHTML=''; fc.innerHTML=''; tc.innerHTML='';
-
-  all.forEach(k => {
-    const c=colorFor(k); const label=k==='me'?'Me':cap(k);
-    const ab=document.createElement('button'); ab.className='pill'+(currentAssignee===k?' active':'');
+function renderPills(){
+  const all=['me',...data.team];
+  const ac=document.getElementById('assignPills');
+  const fc=document.getElementById('filterPills');
+  const tc=document.getElementById('teamPills');
+  ac.innerHTML='';fc.innerHTML='';tc.innerHTML='';
+  all.forEach(k=>{
+    const c=colorFor(k);const label=k==='me'?'Me':cap(k);
+    const ab=document.createElement('button');ab.className='pill'+(currentAssignee===k?' active':'');
     ab.style.cssText=(currentAssignee===k?`background:${c.bg};border-color:${c.border};color:${c.text};`:'')+'margin-right:6px;';
-    ab.textContent=label; ab.onclick=()=>setAssignee(k); ac.appendChild(ab);
-
-    const fb=document.createElement('button'); fb.className='pill'+(activeFilters.has(k)?' active':'');
+    ab.textContent=label;ab.onclick=()=>setAssignee(k);ac.appendChild(ab);
+    const fb=document.createElement('button');fb.className='pill'+(activeFilters.has(k)?' active':'');
     fb.style.cssText=(activeFilters.has(k)?`background:${c.bg};border-color:${c.border};color:${c.text};`:'')+'margin-right:6px;';
-    fb.textContent=label; fb.onclick=()=>toggleFilter(k); fc.appendChild(fb);
+    fb.textContent=label;fb.onclick=()=>toggleFilter(k);fc.appendChild(fb);
   });
-
-  data.team.forEach(k => {
-    const c=colorFor(k); const sp=document.createElement('span'); sp.className='pill';
+  data.team.forEach(k=>{
+    const c=colorFor(k);const sp=document.createElement('span');sp.className='pill';
     sp.style.cssText=`background:${c.bg};border-color:${c.border};color:${c.text};margin-right:6px;cursor:default;`;
-    sp.textContent=cap(k); tc.appendChild(sp);
+    sp.textContent=cap(k);tc.appendChild(sp);
   });
 }
 
-function renderSwitchBtns() {
-  const container=document.getElementById('switchBtns'); container.innerHTML='';
-  ['manager',...data.team].forEach(v => {
-    const btn=document.createElement('button'); btn.className='switch-btn'+(v===currentView?' current':'');
-    btn.innerHTML=`<i class="ti ti-${v==='manager'?'layout-dashboard':'user'}" aria-hidden="true"></i> ${v==='manager'?'Manager':cap(v)}`;
-    btn.onclick=()=>switchView(v); container.appendChild(btn);
-  });
-}
-
-function hasNewCompletions() { return data.tasks.some(t=>t.done&&t.completedBy&&t.completedBy!=='you'); }
-
-function render() {
+function render(){
   const isManager=currentView==='manager';
   document.getElementById('viewTitle').innerHTML=`<i class="ti ti-checklist" aria-hidden="true" style="font-size:20px;vertical-align:-3px;margin-right:8px;"></i>${isManager?'My to-do list':cap(currentView)+"'s tasks"}`;
   document.getElementById('viewBadge').textContent=isManager?'Manager view':'Team member view';
   document.getElementById('managerUI').style.display=isManager?'block':'none';
+  document.getElementById('linksSection').style.display=isManager?'block':'none';
+  document.getElementById('bellBtn').style.display=isManager?'flex':'none';
+  document.getElementById('newTask').placeholder=isManager?'Add a task...':'Add a task for yourself...';
+  updateBellDot();
 
   let visible=isManager?(activeFilters.size===0?data.tasks:data.tasks.filter(t=>activeFilters.has(t.assignee))):data.tasks.filter(t=>t.assignee===currentView);
-  const active=visible.filter(t=>!t.done); const done=visible.filter(t=>t.done);
+  const active=visible.filter(t=>!t.done);const done=visible.filter(t=>t.done);
 
   document.getElementById('activeEmpty').style.display=active.length?'none':'block';
   document.getElementById('doneEmpty').style.display=done.length?'none':'block';
-  document.getElementById('doneLabel').innerHTML=isManager&&hasNewCompletions()?'<span class="notif-dot"></span>Completed':'Completed';
+  document.getElementById('doneLabel').textContent='Completed';
 
-  function buildItem(t) {
-    const isNew=isManager&&t.done&&t.completedBy&&t.completedBy!=='you';
-    const c=colorFor(t.assignee); const li=document.createElement('li');
+  function buildItem(t){
+    const c=colorFor(t.assignee);
+    const isExpanded=expandedTasks.has(t.id);
+    const showUnread=isManager?t.unreadManager:t.unreadTeam;
+    const dotClass=isManager?'unread-manager':'unread-team';
+    const li=document.createElement('li');
     li.className='task-item'+(t.done?' done':'');
-    li.innerHTML=`
-      <input type="checkbox" ${t.done?'checked':''} onchange="toggle(${t.id})" aria-label="Mark complete" />
+    const main=document.createElement('div');
+    main.className='task-main';
+    main.onclick=()=>toggleExpand(t.id);
+    main.innerHTML=`
+      <input type="checkbox" ${t.done?'checked':''} onchange="toggle(${t.id},event)" aria-label="Mark complete" />
       <div class="task-body">
         <div class="task-text">${t.text}</div>
         <div class="task-meta">
           ${isManager?`<span class="tag" style="background:${c.tagBg};color:${c.tagText};">${t.assignee==='me'?'Me':cap(t.assignee)}</span>`:''}
           <span class="task-date">${t.date}</span>
-          ${t.completedBy?`<span class="completed-by">${isNew?'<span class="notif-dot"></span>':''}Completed by ${t.completedBy} · ${t.completedAt}</span>`:''}
+          ${t.completedBy?`<span class="completed-by">Completed by ${t.completedBy} · ${t.completedAt}</span>`:''}
+          ${t.notes&&!isExpanded?`<span style="font-size:11px;color:#aaa;"><i class="ti ti-notes" style="font-size:11px;vertical-align:-1px;margin-right:2px;" aria-hidden="true"></i>has note</span>`:''}
         </div>
-      </div>`;
+      </div>
+      ${showUnread?`<span class="unread-dot ${dotClass}" title="${isManager?'Updated by team':'New task'}"></span>`:''}
+      <i class="ti ti-chevron-down expand-chevron" aria-hidden="true" style="${isExpanded?'transform:rotate(180deg);':''}"></i>`;
+    const expand=document.createElement('div');
+    expand.className='task-expand';
+    expand.style.display=isExpanded?'block':'none';
+    const ta=document.createElement('textarea');
+    ta.placeholder='Add a note...';
+    ta.value=t.notes||'';
+    ta.onchange=()=>saveNote(t.id,ta.value);
+    ta.onclick=e=>e.stopPropagation();
+    expand.appendChild(ta);
+    li.appendChild(main);
+    li.appendChild(expand);
     return li;
   }
 
-  const aList=document.getElementById('activeList'); const dList=document.getElementById('doneList');
-  aList.innerHTML=''; dList.innerHTML='';
+  const aList=document.getElementById('activeList');const dList=document.getElementById('doneList');
+  aList.innerHTML='';dList.innerHTML='';
   active.forEach(t=>aList.appendChild(buildItem(t)));
   done.forEach(t=>dList.appendChild(buildItem(t)));
 }
 
-document.getElementById('newTask').addEventListener('keydown', e=>{ if(e.key==='Enter') addTask(); });
-document.getElementById('newPersonName').addEventListener('keydown', e=>{ if(e.key==='Enter') confirmAddPerson(); if(e.key==='Escape') cancelAddPerson(); });
+document.getElementById('newTask').addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
+document.getElementById('newPersonName').addEventListener('keydown',e=>{if(e.key==='Enter')confirmAddPerson();if(e.key==='Escape')cancelAddPerson();});
 
-renderPills(); renderSwitchBtns(); render();
+renderPills();renderLinks();render();
 </script>
 </body>
 </html>
